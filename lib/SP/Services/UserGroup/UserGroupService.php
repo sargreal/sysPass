@@ -70,6 +70,18 @@ final class UserGroupService extends Service
     }
 
     /**
+     * @param $name
+     *
+     * @return bool
+     * @throws ConstraintException
+     * @throws QueryException
+     */
+    public function checkExistsByName($name)
+    {
+        return $this->userGroupRepository->checkExistsByName($name);
+    }
+
+    /**
      * @param $id
      *
      * @return UserGroupData

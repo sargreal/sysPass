@@ -42,17 +42,21 @@ final class LdapImportParams
     /**
      * @var string
      */
-    public $loginAttribute;
-    /**
-     * @var string
-     */
-    public $userNameAttribute;
-    /**
-     * @var string
-     */
-    public $userGroupNameAttribute;
-    /**
-     * @var string
-     */
     public $filter;
+    /**
+     * @var bool
+     */
+    public $syncGroups;
+    /**
+     * @var bool
+     */
+    public $syncGroupMembership;
+    /**
+     * @var bool
+     */
+    public $useGroupMembershipAttribute;
+    /**
+     * @var bool
+     */
+    public $update;
 }

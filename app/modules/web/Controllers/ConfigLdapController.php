@@ -257,19 +257,16 @@ final class ConfigLdapController extends SimpleControllerBase
             $ldapImportParams = new LdapImportParams();
 
             $ldapImportParams->filter = $this->request->analyzeString('ldap_import_filter');
-            $ldapImportParams->loginAttribute = $this->request->analyzeString('ldap_login_attribute');
-            $ldapImportParams->userNameAttribute = $this->request->analyzeString('ldap_username_attribute');
-            $ldapImportParams->userGroupNameAttribute = $this->request->analyzeString('ldap_groupname_attribute');
             $ldapImportParams->defaultUserGroup = $this->request->analyzeInt('ldap_defaultgroup');
             $ldapImportParams->defaultUserProfile = $this->request->analyzeInt('ldap_defaultprofile');
+            $ldapImportParams->update = $this->request->analyzeBool('ldap_update', false);
 
-            $checkImportGroups = $this->request->analyzeBool('ldap_import_groups', false);
+            $ldapImportParams->syncGroups = $this->request->analyzeBool('ldap_import_groups', false);
+            $ldapImportParams->syncGroupMembership = $this->request->analyzeBool('ldap_sync_group_membership', false);
+            $ldapImportParams->useGroupMembershipAttribute = $this->request->analyzeBool('ldap_use_group_member_attribute', false);
 
-            if ((empty($ldapImportParams->loginAttribute)
-                    || empty($ldapImportParams->userNameAttribute)
-                    || empty($ldapImportParams->defaultUserGroup)
-                    || empty($ldapImportParams->defaultUserProfile))
-                && ($checkImportGroups === true && empty($ldapImportParams->userGroupNameAttribute))
+            if (empty($ldapImportParams->defaultUserGroup)
+                || empty($ldapImportParams->defaultUserProfile)
             ) {
                 throw new ValidationException(__u('Wrong LDAP parameters'));
             }
@@ -282,11 +279,8 @@ final class ConfigLdapController extends SimpleControllerBase
             );
 
             $userLdapService = $this->dic->get(LdapImportService::class);
-            $userLdapService->importUsers($ldapParams, $ldapImportParams);
 
-            if ($checkImportGroups === true) {
-                $userLdapService->importGroups($ldapParams, $ldapImportParams);
-            }
+            $userLdapService->import($ldapParams, $ldapImportParams);
 
             $this->eventDispatcher->notifyEvent('import.ldap.end',
                 new Event($this, EventMessage::factory()

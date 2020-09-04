@@ -57,16 +57,34 @@ final class LdapActions
         'cn'
     ];
 
+    /**
+     * Attributes of groups
+     */
+    const GROUP_ATTRIBUTES = [
+        'dn',
+        'cn',
+        'member',
+        'uniquemember',
+    ];
+
     const ATTRIBUTES_MAPPING = [
         'dn' => 'dn',
+        'login' => 'login',
+        'uid' => 'login',
+        'samaccountname' => 'login',
+        'userprinciplename' => 'login',
         'groupmembership' => 'group',
         'memberof' => 'group',
         'displayname' => 'fullname',
         'fullname' => 'fullname',
+        'cn' => 'fullname',
+        'name' => 'fullname',
         'givenname' => 'name',
         'sn' => 'sn',
         'mail' => 'mail',
-        'lockouttime' => 'expire'
+        'lockouttime' => 'expire',
+        'member' => 'member',
+        'uniquemember' => 'member'
     ];
 
     /**
@@ -235,25 +253,35 @@ final class LdapActions
             );
         }
 
-        // Normalize keys for comparing
-        $results = array_change_key_case($searchResults[0], CASE_LOWER);
+        return $this->createAttributeCollection($searchResults[0]);
+    }
 
+    /**
+     * Create Attribute Collection from a single search result
+     *
+     * @param array $searchResult
+     * @return AttributeCollection
+     */
+    public function createAttributeCollection(array $searchResult): AttributeCollection {
+
+        // Normalize keys for comparing
+        $result = array_change_key_case($searchResult, CASE_LOWER);
         $attributeCollection = new AttributeCollection();
 
         foreach (self::ATTRIBUTES_MAPPING as $attribute => $map) {
-            if (isset($results[$attribute])) {
-                if (is_array($results[$attribute])) {
-                    if ((int)$results[$attribute]['count'] > 1) {
-                        unset($results[$attribute]['count']);
+            if (isset($result[$attribute])) {
+                if (is_array($result[$attribute])) {
+                    if ((int)$result[$attribute]['count'] > 1) {
+                        unset($result[$attribute]['count']);
 
                         // Store the whole array
-                        $attributeCollection->set($map, $results[$attribute]);
+                        $attributeCollection->set($map, $result[$attribute]);
                     } else {
                         // Store first value
-                        $attributeCollection->set($map, trim($results[$attribute][0]));
+                        $attributeCollection->set($map, trim($result[$attribute][0]));
                     }
                 } else {
-                    $attributeCollection->set($map, trim($results[$attribute]));
+                    $attributeCollection->set($map, trim($result[$attribute]));
                 }
             }
         }
@@ -271,7 +299,7 @@ final class LdapActions
      * @return array
      * @throws LdapException
      */
-    public function getObjects($filter, array $attributes = self::USER_ATTRIBUTES, $searchBase = null)
+    public function getObjects($filter, array $attributes = self::USER_ATTRIBUTES, $searchBase = null, $attribute_mapping = false)
     {
         $searchResults = $this->getResults($filter, $attributes, $searchBase);
 
@@ -289,8 +317,44 @@ final class LdapActions
                 null,
                 LdapCode::OPERATIONS_ERROR
             );
+        } else if($attribute_mapping) {
+            foreach ($searchResults as $index => $result) {
+                if (is_array($result)) {
+                    $searchResults[$index] = $this->createAttributeCollection($result);
+                }
+            }
         }
 
         return $searchResults;
+    }
+
+    /**
+     * Get objects with user attributes
+     *
+     * @param string $filter
+     * @param array  $searchBase
+     * @param string $attribute_mapping
+     *
+     * @return array
+     * @throws LdapException
+     */
+    public function getUsers($filter, $searchBase = null, $attribute_mapping = false)
+    {
+        return $this->getObjects($filter, self::USER_ATTRIBUTES, $searchBase, $attribute_mapping);
+    }
+
+    /**
+     * Get Objects with group attributes
+     *
+     * @param string $filter
+     * @param array  $searchBase
+     * @param string $attribute_mapping
+     *
+     * @return array
+     * @throws LdapException
+     */
+    public function getGroups($filter, $searchBase = null, $attribute_mapping = false)
+    {
+        return $this->getObjects($filter, self::GROUP_ATTRIBUTES, $searchBase, $attribute_mapping);
     }
 }

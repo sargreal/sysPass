@@ -543,60 +543,6 @@ use SP\Mvc\View\Template;
 
     <table id="tblLdap" class="data tblConfig">
         <tr>
-            <td class="descField">
-                <?php echo __('Login Attribute'); ?>
-                <div id="help-ldap_login_attribute"
-                     class="icon material-icons <?php echo $icons->getIconHelp()->getClass(); ?>">
-                    <?php echo $icons->getIconHelp()->getIcon(); ?>
-                </div>
-                <div class="mdl-tooltip mdl-tooltip--large"
-                     for="help-ldap_login_attribute">
-                    <p>
-                        <?php echo __('Defines the attribute for the user\'s login when importing.'); ?>
-                    </p>
-                </div>
-            </td>
-            <td class="valField">
-                <div class="lowres-title"><?php echo __('Login Attribute'); ?></div>
-
-                <select id="ldap_login_attribute" name="ldap_login_attribute"
-                        class="select-box" required>
-                    <option value="samaccountname" selected>sAMAccountName
-                    </option>
-                    <option value="userprincipalname">userPrincipalName</option>
-                    <option value="uid">uid</option>
-                    <option value="login">login</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td class="descField">
-                <?php echo __('Name Attribute'); ?>
-                <div id="help-ldap_username_attribute"
-                     class="icon material-icons <?php echo $icons->getIconHelp()->getClass(); ?>">
-                    <?php echo $icons->getIconHelp()->getIcon(); ?>
-                </div>
-                <div class="mdl-tooltip mdl-tooltip--large"
-                     for="help-ldap_username_attribute">
-                    <p>
-                        <?php echo __('Defines the attribute for the user\'s name when importing.'); ?>
-                    </p>
-                </div>
-            </td>
-            <td class="valField">
-                <div class="lowres-title"><?php echo __('Name Attribute'); ?></div>
-
-                <select id="ldap_username_attribute"
-                        name="ldap_username_attribute"
-                        class="select-box" required>
-                    <option value="displayname" selected>displayName</option>
-                    <option value="fullname">fullName</option>
-                    <option value="cn">cn</option>
-                    <option value="name">name</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
             <td class="descField"></td>
             <td class="valField">
                 <ul class="config-ldap-list-action mdl-list">
@@ -615,32 +561,52 @@ use SP\Mvc\View\Template;
                                 <span class="mdl-list__item-sub-title"></span>
                             </span>
                     </li>
-                </ul>
-            </td>
-        </tr>
-        <tr>
-            <td class="descField">
-                <?php echo __('Group Name Attribute'); ?>
-                <div id="help-ldap_groupname_attribute"
-                     class="icon material-icons <?php echo $icons->getIconHelp()->getClass(); ?>">
-                    <?php echo $icons->getIconHelp()->getIcon(); ?>
-                </div>
-                <div class="mdl-tooltip mdl-tooltip--large"
-                     for="help-ldap_groupname_attribute">
-                    <p>
-                        <?php echo __('Defines the attribute for the user group name when importing.'); ?>
-                    </p>
-                </div>
-            </td>
-            <td class="valField">
-                <div class="lowres-title"><?php echo __('Group Name Attribute'); ?></div>
+                    <li class="mdl-list__item mdl-list__item--two-line">
+                        <div class="mdl-switch__box">
+                            <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect"
+                                   for="ldap_sync_group_membership">
+                                <input type="checkbox" id="ldap_sync_group_membership"
+                                       class="mdl-switch__input"
+                                       name="ldap_sync_group_membership"/>
+                            </label>
+                        </div>
 
-                <select id="ldap_groupname_attribute"
-                        name="ldap_groupname_attribute"
-                        class="select-box" required>
-                    <option value="cn">cn</option>
-                    <option value="name">name</option>
-                </select>
+                        <span class="mdl-list__item-primary-content">
+                            <span><?php echo __('Sync Group Membership'); ?></span>
+                            <span class="mdl-list__item-sub-title"></span>
+                        </span>
+                    </li>
+                    <li class="mdl-list__item mdl-list__item--two-line">
+                        <div class="mdl-switch__box">
+                            <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect"
+                                   for="ldap_use_group_member_attribute">
+                                <input type="checkbox" id="ldap_use_group_member_attribute"
+                                       class="mdl-switch__input"
+                                       name="ldap_use_group_member_attribute"/>
+                            </label>
+                        </div>
+
+                        <span class="mdl-list__item-primary-content">
+                            <span><?php echo __('Use group membership attribute'); ?></span>
+                            <span class="mdl-list__item-sub-title"></span>
+                        </span>
+                    </li>
+                    <li class="mdl-list__item mdl-list__item--two-line">
+                        <div class="mdl-switch__box">
+                            <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect"
+                                   for="ldap_update">
+                                <input type="checkbox" id="ldap_update"
+                                       class="mdl-switch__input"
+                                       name="ldap_update"/>
+                            </label>
+                        </div>
+
+                        <span class="mdl-list__item-primary-content">
+                            <span><?php echo __('Update existing Accounts and Groups'); ?></span>
+                            <span class="mdl-list__item-sub-title"></span>
+                        </span>
+                    </li>
+                </ul>
             </td>
         </tr>
         <tr>

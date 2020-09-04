@@ -328,9 +328,23 @@ final class UserGroupRepository extends Repository implements RepositoryItemInte
      */
     public function checkDuplicatedOnAdd($itemData)
     {
+        return $this->checkExistsByName($itemData->getName());
+    }
+
+    /**
+     * Checks whether the given name exists
+     *
+     * @param string $name
+     *
+     * @return bool
+     * @throws ConstraintException
+     * @throws QueryException
+     */
+    public function checkExistsByName(string $name)
+    {
         $queryData = new QueryData();
         $queryData->setQuery('SELECT `name` FROM UserGroup WHERE UPPER(`name`) = UPPER(?)');
-        $queryData->addParam($itemData->getName());
+        $queryData->addParam($name);
 
         return $this->db->doSelect($queryData)->getNumRows() > 0;
     }
